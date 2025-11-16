@@ -3,7 +3,6 @@ import SpotPurchasing from "./PurchaseMethods/SpotVolume";
 
 const PURCHASING_METHODS = [
   "Spot/Volume-Commit",
-  "Volume-Commit",
   "Fixed Spread Contracts",
   "Futures",
   "Swaps",
@@ -16,11 +15,6 @@ const PurchasingMethodPanel = () => {
     switch (method) {
       case "Spot/Volume-Commit":
         return <SpotPurchasing />;
-
-      case "Volume-Commit":
-        return <div style={{ marginTop: "20px", color: "#94a3b8" }}>
-          Volume-Commit component placeholder
-        </div>;
 
       case "Fixed Spread Contracts":
         return <div style={{ marginTop: "20px", color: "#94a3b8" }}>

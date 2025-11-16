@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const ClimateImpactAdjuster = () => {
   const [impacts, setImpacts] = useState({
@@ -20,7 +20,6 @@ const ClimateImpactAdjuster = () => {
   return (
     <div
       style={{
-        marginTop: "24px",
         padding: "16px 18px",
         borderRadius: "12px",
         backgroundColor: "#020617",

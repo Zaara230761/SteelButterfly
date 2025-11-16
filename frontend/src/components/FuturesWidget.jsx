@@ -288,7 +288,6 @@ const FuturesWidget = () => {
                 </div>
               </div>
 
-              {/* Months Selector */}
               <div
                 style={{ display: "flex", alignItems: "center", gap: "4px" }}
               >
@@ -330,8 +329,7 @@ const FuturesWidget = () => {
             <Chart data={chartData} height={300} />
           </>
         )}
-
-        {/* Manufacturer View */}
+        
         {view === "manufacturer" && (
           <div style={{ color: "white", fontFamily: "Inter, sans-serif" }}>
             <p style={{ marginTop: 0 }}>
