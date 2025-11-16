@@ -1,8 +1,8 @@
 import { useState } from "react";
-import SpotPurchasing from "./PurchaseMethods/SpotPurchasing";
+import SpotPurchasing from "./PurchaseMethods/SpotVolume";
 
 const PURCHASING_METHODS = [
-  "Spot Purchasing",
+  "Spot/Volume-Commit",
   "Volume-Commit",
   "Fixed Spread Contracts",
   "Futures",
@@ -14,7 +14,7 @@ const PurchasingMethodPanel = () => {
   const [method, setMethod] = useState(PURCHASING_METHODS[0]);
   const renderMethodComponent = () => {
     switch (method) {
-      case "Spot Purchasing":
+      case "Spot/Volume-Commit":
         return <SpotPurchasing />;
 
       case "Volume-Commit":

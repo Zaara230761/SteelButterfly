@@ -78,7 +78,6 @@ const FuturesWidget = () => {
         padding: "0 40px", // shifted left to leave space for right panel
       }}
     >
-      {/* Widget card */}
       <div
         style={{
           width: "100%",
@@ -90,7 +89,6 @@ const FuturesWidget = () => {
           position: "relative", // for the dropdown menu positioning
         }}
       >
-        {/* Top row: title on left, + button on right */}
         <div
           style={{
             display: "flex",
