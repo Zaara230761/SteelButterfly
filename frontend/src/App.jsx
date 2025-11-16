@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Header from "./components/Header";
+import Header from "./components/header/Header";
 import TabBar from "./components/TabBar";
 import FuturesWidget from "./components/FuturesWidget";
-import PurchasingMethodPanel from "./components/PurchasingMethodPanel";
+import PurchasingMethodPanel from "./components/PurchaseMethodPanel";
 
 const App = () => {
   const [region, setRegion] = useState("china");
@@ -33,16 +33,17 @@ const App = () => {
       {activeTab === "visualizer" && (
         <div
           style={{
+            width: "95%",
             display: "flex",
             alignItems: "flex-start",
             gap: "32px",
-            padding: "32px 48px",
+            marginTop: "30px",
           }}
         >
-          <div style={{ flex: "0 0 640px" }}>
+          <div style={{ flex: "0 0 60%" }}>
             <FuturesWidget />
           </div>
-          <div style={{ flex: "0 0 360px", marginTop: "94px" }}>
+          <div style={{ flex: "0 0 40%"}}>
             <PurchasingMethodPanel />
           </div>
         </div>
