@@ -12,5 +12,5 @@ app.add_middleware(
 )
 
 @app.get("/prices")
-def get_prices(month: int, filename: str):
-    return xlsx_parser(filename, month)
+def get_prices(month: int, region: str):
+    return xlsx_parser(region, month)

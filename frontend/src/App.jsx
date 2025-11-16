@@ -1,78 +1,25 @@
-// App.jsx
-import React, { useEffect, useRef } from "react";
-import { createChart, LineSeries } from "lightweight-charts";
+import React, { useEffect, useState } from "react";
+import Chart from "./components/chart/chart";
 
 const App = () => {
-  const chartContainerRef = useRef(null);
-  const chartRef = useRef(null);
-  const seriesRef = useRef(null);
+  const [region, setRegion] = useState("china");
+  const [month, setMonth] = useState(1);
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
-    const container = chartContainerRef.current;
-    if (!container) return;
-
-    // Create chart (v5+ syntax)
-    const chart = createChart(container, {
-      width: container.clientWidth,
-      height: 400,
-      layout: {
-        background: { type: "solid", color: "#ffffff" },
-        textColor: "#333333",
-      },
-      grid: {
-        vertLines: { color: "#eeeeee" },
-        horzLines: { color: "#eeeeee" },
-      },
-      rightPriceScale: {
-        borderColor: "#cccccc",
-      },
-      timeScale: {
-        borderColor: "#cccccc",
-      },
-    });
-
-    chartRef.current = chart;
-
-    // ✅ New API: addSeries(LineSeries, options)
-    const lineSeries = chart.addSeries(LineSeries, {
-      lineWidth: 2,
-      lineColor: "#2962FF",
-    });
-    seriesRef.current = lineSeries;
-
-    // Sample data
-    lineSeries.setData([
-      { time: "2024-01-01", value: 110 },
-      { time: "2024-01-02", value: 113 },
-      { time: "2024-01-03", value: 108 },
-      { time: "2024-01-04", value: 115 },
-      { time: "2024-01-05", value: 120 },
-      { time: "2024-01-06", value: 119 },
-      { time: "2024-01-07", value: 123 },
-    ]);
-
-    chart.timeScale().fitContent();
-
-    // Make chart responsive
-    const handleResize = () => {
-      if (!chartRef.current || !chartContainerRef.current) return;
-      chartRef.current.applyOptions({
-        width: chartContainerRef.current.clientWidth,
+    fetch(`http://localhost:8000/prices?region=${region}&month=${month}`)
+      .then((res) => res.json())
+      .then((data) => {
+        const formatted = Object.entries(data).map(([date, value]) => ({
+          time: date,
+          value: value,
+        }));
+        setChartData(formatted);
+      })
+      .catch((err) => {
+        console.error("Error fetching prices:", err);
       });
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    // Cleanup on unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      if (chartRef.current) {
-        chartRef.current.remove();
-        chartRef.current = null;
-        seriesRef.current = null;
-      }
-    };
-  }, []);
+  }, [region, month]); // <-- runs when dropdowns change
 
   return (
     <div
@@ -87,13 +34,32 @@ const App = () => {
         fontFamily: "system-ui, sans-serif",
       }}
     >
-      <h2 style={{ marginTop: 0, marginBottom: "16px" }}>
-        Lightweight Charts – React (v5+) Example
-      </h2>
-      <div
-        ref={chartContainerRef}
-        style={{ width: "100%", height: "400px" }}
-      />
+      <h2 style={{ marginTop: 0, marginBottom: "16px" }}>Futures</h2>
+      <div style={{ display: "flex", gap: "16px", marginBottom: "20px" }}>
+        <select
+          value={region}
+          onChange={(e) => setRegion(e.target.value)}
+          style={{ padding: "8px" }}
+        >
+          <option value="china">China</option>
+          <option value="usa">USA</option>
+          <option value="india">India</option>
+        </select>
+
+        <select
+          value={month}
+          onChange={(e) => setMonth(Number(e.target.value))}
+          style={{ padding: "8px" }}
+        >
+          {Array.from({ length: 15 }, (_, i) => (
+            <option key={i + 1} value={i + 1}>
+              Month {i + 1}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <Chart data={chartData} height={300} />
     </div>
   );
 };
