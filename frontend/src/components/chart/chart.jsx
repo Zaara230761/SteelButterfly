@@ -2,19 +2,10 @@ import { createChart, LineSeries } from "lightweight-charts";
 import { useEffect, useRef } from "react";
 
 const REGION_COLORS = {
-  china: "#FF1744", // red
-  usa: "#2962FF",   // blue
-  india: "#00C853", // green
+  china: "#FF1744",
+  usa: "#2962FF",
+  india: "#00C853",
 };
-
-const FALLBACK_COLORS = [
-  "#2962FF", // blue
-  "#FF6D00", // orange
-  "#00C853", // green
-  "#D500F9", // purple
-  "#FF1744", // red
-  "#00B0FF", // light blue
-];
 
 const Chart = ({ data, regions = [], height = 400 }) => {
   const chartContainerRef = useRef(null);
@@ -94,8 +85,7 @@ const Chart = ({ data, regions = [], height = 400 }) => {
     datasets.forEach((dataset, i) => {
       const regionName = regions[i]?.toLowerCase?.();
       const color =
-        (regionName && REGION_COLORS[regionName]) ||
-        FALLBACK_COLORS[i % FALLBACK_COLORS.length];
+        (regionName && REGION_COLORS[regionName]);
 
       const series = chart.addSeries(LineSeries, {
         lineWidth: 2,

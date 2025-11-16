@@ -7,14 +7,22 @@ export default function SpotPurchasing() {
   const MAX_PRICE = 10000;
   const MAX_TONS = 100_000_000;
 
-  const formatCurrency = (value) => {
-    if (isNaN(value)) return "$0.00";
-    return value.toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    });
-  };
+  const formatCost = (value) => {
+  if (isNaN(value)) return "$0.00";
+
+  // If the value is extremely large, show scientific notation
+  if (value >= 1e7) {
+    // Example: 1.234e+15 → "$1.23e+15"
+    return `$${value.toExponential(2)}`;
+  }
+
+  // Otherwise use normal currency formatting
+  return value.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  });
+};
 
   const handlePriceChange = (value) => {
     if (value === "") {
@@ -78,7 +86,6 @@ export default function SpotPurchasing() {
   return (
     <div
       style={{
-        marginTop: "10px",
         padding: "16px",
         borderRadius: "12px",
         border: "1px solid #1e293b",
@@ -89,17 +96,16 @@ export default function SpotPurchasing() {
         fontSize: "18px",
       }}
     >
-      {/* Input Row */}
       <div
         style={{
           display: "flex",
-          gap: "32px",
-          justifyContent: "flex-start",
+          flexDirection: "column",
+          gap: "20px",
           marginBottom: "24px",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <label>Price:</label>
+          <label style={{ width: "60px" }}>Price:</label>
           <input
             type="text"
             value={price}
@@ -112,42 +118,47 @@ export default function SpotPurchasing() {
               border: "1px solid #334155",
               backgroundColor: "#0f172a",
               color: "white",
-              fontSize: "20px",
+              fontSize: "16px",
               fontWeight: 600,
             }}
           />
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <label>Tons:</label>
+          <label style={{ width: "60px" }}>Tons:</label>
           <input
             type="text"
             value={tons}
             onChange={(e) => handleTonsChange(e.target.value)}
             onBlur={handleTonsBlur}
             style={{
-              width: "120px",
+              width: "100px",
               padding: "6px 8px",
               borderRadius: "6px",
               border: "1px solid #334155",
               backgroundColor: "#0f172a",
               color: "white",
-              fontSize: "20px",
+              fontSize: "16px",
               fontWeight: 600,
             }}
           />
         </div>
       </div>
 
-      <div
-        style={{
-          fontSize: "26px",
-          fontWeight: 800,
-          textAlign: "center",
-          width: "100%",
-        }}
-      >
-        Total Cost: {formatCurrency(total)}
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <label style={{ width: "60px" }}>Cost = </label>
+        <div
+          style={{
+            fontSize: "20px",
+            fontWeight: 800,
+            width: "150px",          // fixed
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {formatCost(total)}
+        </div>
       </div>
     </div>
   );
