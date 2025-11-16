@@ -89,7 +89,7 @@ const ClimateImpactAdjuster = () => {
             gap: "12px",
           }}
         >
-          {["1", "2", "3"].map((value) => (
+          {["1.5", "2", "2.5", "3"].map((value) => (
             <label
               key={value}
               style={{

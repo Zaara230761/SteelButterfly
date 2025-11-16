@@ -14,9 +14,9 @@ const MenuItem = ({ label, active, onClick }) => {
         width: "100%",
         padding: "10px 14px",
         backgroundColor: hover
-          ? "#1e293b" // hover color
+          ? "#1e293b"
           : active
-          ? "#111827" // active/selected color
+          ? "#111827"
           : "transparent",
         border: "none",
         color: "#e5e7eb",
@@ -33,35 +33,43 @@ const MenuItem = ({ label, active, onClick }) => {
 };
 
 const FuturesWidget = () => {
-  const [region, setRegion] = useState("china");
+  const [region, setRegion] = useState(["china"]); // MULTI-SELECT
+  const [regionMenuOpen, setRegionMenuOpen] = useState(false);
+
   const [month, setMonth] = useState(1);
   const [chartData, setChartData] = useState([]);
 
-  // which view is selected in the widget
-  const [view, setView] = useState("prices"); // "prices" | "manufacturer"
-
-  // is the + menu open?
+  const [view, setView] = useState("prices");
   const [menuOpen, setMenuOpen] = useState(false);
-
-  // hover state for the + button
   const [hoverPlus, setHoverPlus] = useState(false);
 
+  // Close the region dropdown on outside click
   useEffect(() => {
-    // only fetch for the prices time-series view
+    const close = (e) => {
+      if (!e.target.closest(".region-dropdown")) {
+        setRegionMenuOpen(false);
+      }
+    };
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, []);
+
+  // Fetch when in price view
+  useEffect(() => {
     if (view !== "prices") return;
 
-    fetch(`http://localhost:8000/prices?region=${region}&month=${month}`)
+    const query = region.map((r) => `region=${r}`).join("&");
+
+    fetch(`http://localhost:8000/prices?${query}&month=${month}`)
       .then((res) => res.json())
       .then((data) => {
         const formatted = Object.entries(data).map(([date, value]) => ({
           time: date,
-          value: value,
+          value,
         }));
         setChartData(formatted);
       })
-      .catch((err) => {
-        console.error("Error fetching prices:", err);
-      });
+      .catch((err) => console.error("Error fetching prices:", err));
   }, [region, month, view]);
 
   const handleSelectView = (nextView) => {
@@ -75,9 +83,10 @@ const FuturesWidget = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
-        padding: "0 40px", // shifted left to leave space for right panel
+        padding: "0 40px",
       }}
     >
+      {/* Widget card */}
       <div
         style={{
           width: "100%",
@@ -86,9 +95,10 @@ const FuturesWidget = () => {
           padding: "16px",
           backgroundColor: "#111",
           boxSizing: "border-box",
-          position: "relative", // for the dropdown menu positioning
+          position: "relative",
         }}
       >
+        {/* Top row */}
         <div
           style={{
             display: "flex",
@@ -96,16 +106,16 @@ const FuturesWidget = () => {
             justifyContent: "space-between",
           }}
         >
-        <h1
-          style={{
-            color: "white",
-            fontFamily: "Inter, sans-serif",
-            fontSize: "24px",
-            fontWeight: "600",
-          }}
-        >
-          HRC Futures
-        </h1>
+          <h1
+            style={{
+              color: "white",
+              fontFamily: "Inter, sans-serif",
+              fontSize: "24px",
+              fontWeight: "600",
+            }}
+          >
+            HRC Futures
+          </h1>
 
           <button
             onClick={() => setMenuOpen((open) => !open)}
@@ -125,15 +135,15 @@ const FuturesWidget = () => {
               fontSize: "18px",
               lineHeight: 1,
               padding: 0,
-              transition: "background-color 0.15s ease-in-out, border-color 0.15s ease-in-out",
+              transition:
+                "background-color 0.15s ease-in-out, border-color 0.15s ease-in-out",
             }}
-            aria-label="Change view"
           >
             +
           </button>
         </div>
 
-        {/* Dropdown menu for selecting view */}
+        {/* Dropdown for view selection */}
         {menuOpen && (
           <div
             style={{
@@ -161,89 +171,167 @@ const FuturesWidget = () => {
           </div>
         )}
 
-        {/* Content area depends on selected view */}
+        {/* Price View */}
         {view === "prices" && (
           <>
-          <div
-            style={{
-              display: "flex",
-              gap: "16px",
-              marginBottom: "20px",
-              alignItems: "center",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-              <span
+            <div
+              style={{
+                display: "flex",
+                gap: "16px",
+                marginBottom: "20px",
+                alignItems: "center",
+              }}
+            >
+              {/* ------- MULTI-SELECT REGION DROPDOWN ------- */}
+              <div
+                className="region-dropdown"
                 style={{
-                  color: "#e5e7eb",
-                  fontSize: "17px",
-                  fontFamily: "Inter, sans-serif",
-                  fontWeight: "800",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  position: "relative",
                 }}
               >
-                Country:
-              </span>
+                <span
+                  style={{
+                    color: "#e5e7eb",
+                    fontSize: "17px",
+                    fontFamily: "Inter, sans-serif",
+                    fontWeight: "800",
+                  }}
+                >
+                  Country:
+                </span>
 
-              <select
-                value={region}
-                onChange={(e) => setRegion(e.target.value)}
-                style={{
-                  padding: "10px 14px",
-                  borderRadius: "10px",
-                  border: "1px solid #1f2937",
-                  backgroundColor: "#020617",
-                  color: "#e5e7eb",
-                  fontSize: "15px",
-                  fontFamily: "Inter, sans-serif",
-                  cursor: "pointer",
-                  boxSizing: "border-box",
-                }}
+                <div style={{ position: "relative" }}>
+                  {/* Selector Button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setRegionMenuOpen((prev) => !prev);
+                    }}
+                    style={{
+                      padding: "10px 14px",
+                      borderRadius: "10px",
+                      border: "1px solid #1f2937",
+                      backgroundColor: "#020617",
+                      color: "#e5e7eb",
+                      fontSize: "15px",
+                      fontFamily: "Inter, sans-serif",
+                      cursor: "pointer",
+                      minWidth: "180px",
+                      textAlign: "left",
+                    }}
+                  >
+                    {region.length === 0
+                      ? "Select countries..."
+                      : region.map((r) => r.toUpperCase()).join(", ")}
+                  </button>
+
+                  {/* Dropdown */}
+                  {regionMenuOpen && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "50px",
+                        left: 0,
+                        backgroundColor: "#0f172a",
+                        border: "1px solid #1e293b",
+                        borderRadius: "6px",
+                        boxShadow: "0 8px 20px rgba(0, 0, 0, 0.5)",
+                        minWidth: "200px",
+                        zIndex: 20,
+                        padding: "4px 0",
+                      }}
+                    >
+                      {[
+                        { id: "china", label: "🇨🇳 China" },
+                        { id: "usa", label: "🇺🇸 USA" },
+                        { id: "india", label: "🇮🇳 India" },
+                      ].map((opt) => (
+                        <label
+                          key={opt.id}
+                          onClick={(e) => e.stopPropagation()}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
+                            padding: "10px 14px",
+                            cursor: "pointer",
+                            userSelect: "none",
+                            color: region.includes(opt.id)
+                              ? "#fff"
+                              : "#e5e7eb",
+                            backgroundColor: region.includes(opt.id)
+                              ? "#1e293b"
+                              : "transparent",
+                            fontFamily: "Inter, sans-serif",
+                            fontSize: "15px",
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={region.includes(opt.id)}
+                            onChange={() => {
+                              setRegion((prev) =>
+                                prev.includes(opt.id)
+                                  ? prev.filter((r) => r !== opt.id)
+                                  : [...prev, opt.id]
+                              );
+                            }}
+                          />
+                          {opt.label}
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Months Selector */}
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "4px" }}
               >
-                <option value="china">🇨🇳 China</option>
-                <option value="usa">🇺🇸 USA</option>
-                <option value="india">🇮🇳 India</option>
-              </select>
+                <span
+                  style={{
+                    color: "#e5e7eb",
+                    fontSize: "17px",
+                    fontFamily: "Inter, sans-serif",
+                    fontWeight: "800",
+                  }}
+                >
+                  Months Out:
+                </span>
+
+                <select
+                  value={month}
+                  onChange={(e) => setMonth(Number(e.target.value))}
+                  style={{
+                    padding: "10px 14px",
+                    borderRadius: "10px",
+                    border: "1px solid #1f2937",
+                    backgroundColor: "#020617",
+                    color: "#e5e7eb",
+                    fontSize: "15px",
+                    fontFamily: "Inter, sans-serif",
+                    cursor: "pointer",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  {Array.from({ length: 15 }, (_, i) => (
+                    <option key={i + 1} value={i + 1}>
+                      {i + 1}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-              <span
-                style={{
-                  color: "#e5e7eb",
-                  fontSize: "17px",
-                  fontFamily: "Inter, sans-serif",
-                  fontWeight: "800",
-                }}
-              >
-                Months Out:
-              </span>
-
-              <select
-                value={month}
-                onChange={(e) => setMonth(Number(e.target.value))}
-                style={{
-                  padding: "10px 14px",
-                  borderRadius: "10px",
-                  border: "1px solid #1f2937",
-                  backgroundColor: "#020617",
-                  color: "#e5e7eb",
-                  fontSize: "15px",
-                  fontFamily: "Inter, sans-serif",
-                  cursor: "pointer",
-                  boxSizing: "border-box",
-                }}
-              >
-                {Array.from({ length: 15 }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {i + 1}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
             <Chart data={chartData} height={300} />
           </>
         )}
 
+        {/* Manufacturer View */}
         {view === "manufacturer" && (
           <div style={{ color: "white", fontFamily: "Inter, sans-serif" }}>
             <p style={{ marginTop: 0 }}>
