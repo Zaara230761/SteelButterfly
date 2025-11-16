@@ -7,6 +7,12 @@ import re
 from typing import Dict, Optional
 
 
+DEFAULT_F_SULF = 0.2  # Fraction of PM2.5 monetary damage attributable to sulfate
+DEFAULT_Y = 1.4  # Mass yield (t PM2.5 sulfate formed per t SO2 emitted)
+DEFAULT_C0 = 1  # Base cost of water
+DEFAULT_BETA = 9  # Scarcity sensitivity parameter
+
+
 _COMPONENT_ALIAS_MAP = {
     "scc": "scc",
     "scco2": "scc",
@@ -90,13 +96,13 @@ def climate_adjusted_price(
     T_CO2,
     D_PM,
     E_SO2,
-    Y,
-    f_sulf,
-    M_SO2,
-    C0,
-    beta,
-    S,
-    W,
+    Y=DEFAULT_Y,
+    f_sulf=DEFAULT_F_SULF,
+    M_SO2=0,
+    C0=DEFAULT_C0,
+    beta=DEFAULT_BETA,
+    S=0,
+    W=0,
     *,
     component_flags: Optional[Dict[str, bool]] = None,
     return_breakdown: bool = False,
@@ -126,4 +132,3 @@ def climate_adjusted_price(
     if return_breakdown:
         return adjusted_price, component_costs
     return adjusted_price
-
