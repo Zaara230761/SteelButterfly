@@ -1,6 +1,5 @@
 import React from "react";
 import Logo from "../assets/logo_wide.png";
-import EquationGraphic from "../assets/climate_equation.svg";
 
 const SectionTitle = ({ children }) => (
   <h2
@@ -119,23 +118,20 @@ const ModelInformation = () => {
           style={{
             background: "#0f172a",
             borderRadius: "12px",
-            padding: "16px",
+            padding: "20px",
             marginTop: "16px",
-            textAlign: "center",
+            fontFamily: "'IBM Plex Mono', 'Fira Code', monospace",
+            fontSize: "0.9rem",
+            overflowX: "auto",
           }}
         >
-          <img
-            src={EquationGraphic}
-            alt="Climate impact adjusted price equation"
-            style={{
-              width: "100%",
-              height: "auto",
-              maxWidth: "900px",
-              borderRadius: "8px",
-              background: "white",
-              boxShadow: "0 10px 30px rgba(15, 23, 42, 0.35)",
-            }}
-          />
+          <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+{`P' = [
+  P + SC_CO2 * (M_CO2 + T_CO2)
+    + ((D_PM / E_SO2) * Y * f_sulf) * M_SO2
+    + C0 * (1 + βS) * W
+]`}
+          </pre>
         </div>
 
         <div style={{ marginTop: "16px", display: "grid", gap: "6px" }}>
