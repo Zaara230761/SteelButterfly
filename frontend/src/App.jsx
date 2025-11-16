@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 import Chart from "./components/chart/chart";
+import Header from "./components/Header";
+import TabBar from "./components/TabBar";
+import FuturesWidget from "./components/FuturesWidget";
+import PurchasingMethodPanel from "./components/PurchasingMethodPanel";
 
 const App = () => {
   const [region, setRegion] = useState("china");
   const [month, setMonth] = useState(1);
   const [chartData, setChartData] = useState([]);
+  const [activeTab, setActiveTab] = useState("visualizer");
 
   useEffect(() => {
+    if (activeTab !== "visualizer") return; // only fetch on visualizer tab
     fetch(`http://localhost:8000/prices?region=${region}&month=${month}`)
       .then((res) => res.json())
       .then((data) => {
@@ -19,48 +25,34 @@ const App = () => {
       .catch((err) => {
         console.error("Error fetching prices:", err);
       });
-  }, [region, month]); // <-- runs when dropdowns change
+  }, [region, month, activeTab]); // <-- runs when dropdowns change
 
   return (
-    <div
-      style={{
-        width: "100%",
-        maxWidth: "800px",
-        margin: "40px auto",
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-        padding: "16px",
-        boxSizing: "border-box",
-        fontFamily: "system-ui, sans-serif",
-      }}
-    >
-      <h2 style={{ marginTop: 0, marginBottom: "16px" }}>Futures</h2>
-      <div style={{ display: "flex", gap: "16px", marginBottom: "20px" }}>
-        <select
-          value={region}
-          onChange={(e) => setRegion(e.target.value)}
-          style={{ padding: "8px" }}
+    <>
+      <Header />
+      <TabBar activeTab={activeTab} onChange={setActiveTab} />
+      {activeTab === "visualizer" && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "32px",
+            padding: "32px 48px",
+          }}
         >
-          <option value="china">China</option>
-          <option value="usa">USA</option>
-          <option value="india">India</option>
-        </select>
+          {/* LEFT COLUMN: HRC Prices widget */}
+          <div style={{ flex: "0 0 640px" }}>
+            <FuturesWidget />
+          </div>
 
-        <select
-          value={month}
-          onChange={(e) => setMonth(Number(e.target.value))}
-          style={{ padding: "8px" }}
-        >
-          {Array.from({ length: 15 }, (_, i) => (
-            <option key={i + 1} value={i + 1}>
-              Month {i + 1}
-            </option>
-          ))}
-        </select>
-      </div>
+          {/* RIGHT COLUMN: Purchasing Method panel */}
+          <div style={{ flex: "0 0 360px", marginTop: "94px" }}>
+            <PurchasingMethodPanel />
+          </div>
+        </div>
+      )}
 
-      <Chart data={chartData} height={300} />
-    </div>
+      </>
   );
 };
 
