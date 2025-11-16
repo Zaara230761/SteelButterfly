@@ -39,13 +39,7 @@ const ModelInformation = () => {
         fontFamily: "Inter, sans-serif",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          marginBottom: "40px",
-        }}
-      >
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: "40px" }}>
         <div
           style={{
             padding: "20px",
@@ -82,80 +76,94 @@ const ModelInformation = () => {
         <h1 style={{ marginTop: 0, marginBottom: "8px" }}>
           Steel Butterfly Climate Impact Model
         </h1>
+
         <p style={{ ...paragraphStyle, marginTop: 0 }}>
-          This brief mirrors the LaTeX specification shipped in
-          <code style={{ marginLeft: "4px" }}>docs/model_information.tex</code> so
-          the Model Information tab always reflects the model that powers the
-          climate-adjusted HRC calculator.
+          This description mirrors the LaTeX specification stored in{" "}
+          <code style={{ marginLeft: "4px" }}>docs/model_information.tex</code>.  
+          It ensures the Model Information tab always matches the backend model
+          used in the Climate-Adjusted HRC Price Calculator.
         </p>
 
+        {/* ------------------------- NEED SECTION -------------------------- */}
         <SectionTitle>🌍 The Need</SectionTitle>
         <ul style={listStyle}>
           <li>
-            Steel industry supply chains have massive environmental impacts, and
-            upstream price talks rarely internalize those damages.
+            Steel production has significant climate, air-quality, and water-use
+            impacts, yet these costs are rarely visible in traditional steel pricing.
           </li>
           <li>
-            The traded HRC sticker price ignores hidden costs to water, air, and
-            public health, so procurement analyses must expose those externalities.
+            The standard HRC market price does not account for externalities such as
+            carbon emissions, particulate pollution, or regional water scarcity.
           </li>
           <li>
-            Sulfur dioxide (SO₂) oxidizes into sulfate PM2.5 that drives lung
-            disease, smog, and additional climate forcing, so it is explicitly
-            modeled alongside carbon and water.
+            Our model makes these hidden environmental and health costs explicit,
+            enabling procurement choices that reflect true social and ecological impact.
           </li>
         </ul>
 
+        {/* ------------------------- EQUATION ----------------------------- */}
         <SectionTitle>🧮 Climate Impact Adjusted Price</SectionTitle>
         <p style={paragraphStyle}>
-          The UI feeds user inputs into the exact pricing equation running in
-          <code style={{ margin: "0 4px" }}>backend/pricing.py</code>. Each
-          damage block can be toggled to compare conventional procurement against
-          climate-informed purchasing.
+          The adjusted HRC price is computed using the equation shown below, which
+          incorporates environmental damages from CO₂, SO₂-related particulate matter,
+          and freshwater consumption.
         </p>
 
         <div
-          style={{
-            background: "#0f172a",
-            borderRadius: "12px",
-            padding: "20px",
-            marginTop: "16px",
-            fontFamily: "'IBM Plex Mono', 'Fira Code', monospace",
-            fontSize: "0.9rem",
-            overflowX: "auto",
-          }}
-        >
-          <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
-{`P' = [
-  P + SC_CO2 * (M_CO2 + T_CO2)
-    + ((D_PM / E_SO2) * Y * f_sulf) * M_SO2
-    + C0 * (1 + βS) * W
-]`}
-          </pre>
-        </div>
+  style={{
+    background: "#0f172a",
+    borderRadius: "12px",
+    padding: "20px",
+    marginTop: "16px",
+    display: "flex",
+    justifyContent: "center",
+  }}
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="100%"
+    height="120"
+    viewBox="0 0 1350 200"
+    preserveAspectRatio="xMidYMid meet"
+  >
+    <text
+      x="50%"
+      y="50%"
+      fontFamily="Times New Roman, serif"
+      fontSize="40"
+      fill="white"
+      textAnchor="middle"
+      dominantBaseline="middle"
+    >
+      P' = P 
+      + SC_CO₂·(M_CO₂ + T_CO₂)
+      + (D_PM / E_SO₂)·Y·fₛᵤₗ·M_SO₂
+      + C₀·(1 + βS)·W
+    </text>
+  </svg>
+</div>
 
-        <div style={{ marginTop: "16px", display: "grid", gap: "6px" }}>
+
+        {/* ------------------------- VARIABLE DEFINITIONS ------------------ */}
+        <div style={{ marginTop: "20px", display: "grid", gap: "6px" }}>
           {[
             ["P'", "Climate-adjusted HRC price"],
-            ["P", "Original HRC price"],
-            ["SC_CO2", "Social cost of CO₂ at the selected discount rate"],
-            ["M_CO2", "Mill-level CO₂ emissions from manufacturing"],
-            ["T_CO2", "Transportation CO₂ per destination region"],
-            [
-              "D_PM",
-              "Monetized particulate matter damages per region per year",
-            ],
-            ["E_SO2", "Regional SO₂ emissions per year"],
-            ["Y", "Mass yield converting SO₂ to sulfate aerosols"],
-            ["f_sulf", "Fraction of PM damages attributable to sulfate"],
-            ["M_SO2", "Mill-level SO₂ emissions"],
-            ["C0", "Base water cost (e.g., $1/m³)"],
-            ["β", "Scarcity sensitivity parameter"],
-            ["S", "Water scarcity indicator (0–1)"],
-            ["W", "Water usage per mill"],
-          ].map(([symbol, description]) => (
+            ["P", "Original HRC market price"],
+            ["SC_CO2", "Social cost of carbon for the selected discount rate"],
+            ["M_CO2", "CO₂ emissions from steel manufacturing at the mill"],
+            ["T_CO2", "CO₂ emissions from transportation to the destination region"],
+            ["D_PM", "Total monetized PM2.5 health damages for the region"],
+            ["E_SO2", "Total annual SO₂ emissions for that same region"],
+            ["Y", "Mass yield converting SO₂ to sulfate PM"],
+            ["f_sulf", "Fraction of PM health damages caused by sulfate aerosols"],
+            ["M_SO2", "SO₂ emitted per ton of steel at the mill"],
+            ["C0", "Base cost of freshwater (e.g. $/m³)"],
+            ["β", "Multiplier describing sensitivity to water scarcity"],
+            ["S", "Regional water scarcity index (0 = abundant, 1 = severe)"],
+            ["W", "Water consumption per ton of steel produced"],
+          ].map(([s, d]) => (
             <div
-              key={symbol}
+              key={s}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -166,118 +174,88 @@ const ModelInformation = () => {
                 fontSize: "0.95rem",
               }}
             >
-              <strong style={{ color: "#38bdf8" }}>{symbol}</strong>
-              <span style={{ marginLeft: "16px", textAlign: "right" }}>
-                {description}
-              </span>
+              <strong style={{ color: "#38bdf8" }}>{s}</strong>
+              <span style={{ marginLeft: "16px", textAlign: "right" }}>{d}</span>
             </div>
           ))}
         </div>
 
-        <SectionTitle>🌫️ Social Cost Blocks</SectionTitle>
-        <h3 style={{ marginTop: "20px", color: "#94a3b8" }}>
-          Carbon Dioxide
-        </h3>
+        {/* ------------------------- SOCIAL COST BLOCKS -------------------- */}
+        <SectionTitle>🌫️ How Each Cost Component Works</SectionTitle>
+
+        <h3 style={{ color: "#94a3b8", marginTop: "20px" }}>Carbon Dioxide (CO₂)</h3>
         <p style={paragraphStyle}>
-          The SCC term multiplies the externally supplied schedule
-          <em>SC_CO2</em> by the mill's total greenhouse-gas footprint
-          <em>(M_CO2 + T_CO2)</em>. The discount-rate selector (1.5–3%) is wired
-          to the 2022 Interagency Working Group values so users can stress-test
-          sensitivity to policy scenarios. Toggling SCC off zeroes this
-          component, enabling clean A/B comparisons.
+          This term captures climate damages using the Social Cost of Carbon
+          (<em>SC_CO2</em>). The model adds together manufacturing emissions
+          (<em>M_CO2</em>) and transport emissions (<em>T_CO2</em>) to compute the
+          total CO₂ footprint per ton of steel. Users can toggle this component or
+          change the discount rate to reflect different policy scenarios.
         </p>
 
-        <h3 style={{ marginTop: "20px", color: "#94a3b8" }}>
-          Sulfur Dioxide
-        </h3>
+        <h3 style={{ color: "#94a3b8", marginTop: "20px" }}>SO₂ and Particulate Matter (PM2.5)</h3>
         <p style={paragraphStyle}>
-          Sulfur dioxide—mislabelled as “silicon dioxide” in early drafts—is
-          priced via a damage-function cascade. The ratio D_PM / E_SO2 maps
-          aggregate particulate damages to an SO₂ cost per ton, Y handles the
-          conversion to sulfate aerosols, and f_sulf isolates sulfate-specific
-          damages. Multiplying by M_SO2 yields a monetized penalty for the mill's
-          sulfur footprint.
+          SO₂ is a precursor to sulfate PM2.5, a pollutant linked to respiratory 
+          and cardiovascular disease.  
+          <br />
+          The term <em>(D_PM / E_SO2)</em> translates a region’s total monetized PM
+          damages into a damage-per-ton-of-SO₂ rate. This is scaled by:
         </p>
 
-        <h3 style={{ marginTop: "20px", color: "#94a3b8" }}>Water Usage</h3>
+        <ul style={listStyle}>
+          <li><strong>Y</strong> — how much sulfate PM is formed per ton of SO₂,</li>
+          <li><strong>fₛᵤₗf</strong> — the portion of PM damages caused by sulfate,</li>
+          <li><strong>M_SO₂</strong> — SO₂ emitted by the mill.</li>
+        </ul>
+
         <p style={paragraphStyle}>
-          Water impacts enter as a base volumetric charge C0 · W that is scaled
-          by regional scarcity (1 + βS). This keeps the units intuitive while
-          letting procurement teams test how drought (S → 1) magnifies water cost
-          exposure for electric-arc furnace operations.
+          Multiplying these together gives a monetary penalty that reflects how a 
+          mill’s sulfur pollution contributes to regional health impacts.
         </p>
 
+        <h3 style={{ color: "#94a3b8", marginTop: "20px" }}>Water Usage</h3>
+        <p style={paragraphStyle}>
+          Water use is priced using a base water cost <em>C0</em> multiplied by
+          mill water usage <em>W</em>.  
+          The term <em>(1 + βS)</em> increases the water cost in regions where scarcity
+          (<em>S</em>) is high, allowing users to explore the effect of drought or
+          long-term hydrological stress on production costs.
+        </p>
+
+        {/* ------------------------- PURCHASING METHODS -------------------- */}
         <SectionTitle>📦 Steel Purchasing Methods</SectionTitle>
         <p style={paragraphStyle}>
-          The three interactive calculators in the Purchasing Methods panel are
-          mirrored below so finance teams can map UI widgets to their underlying
-          payoff math.
+          The tool also includes three pricing calculators for evaluating purchasing
+          strategies side-by-side with climate-adjusted costs:
         </p>
+
         <ul style={listStyle}>
           <li>
-            <strong>Spot / Volume-Commit</strong> (<code>components/SpotVolume.jsx</code>
-            ): multiplies entered spot price and tonnage with scientific notation
-            for ultra-large orders.
+            <strong>Spot / Volume Commit</strong> – Computes contract value directly from
+            spot prices and tonnage.
           </li>
           <li>
-            <strong>Long Future</strong> (<code>components/LongFuture.jsx</code>):
-            tracks entry notional, settlement notional, and mark-to-market P&L
-            using (settlement − entry) × tonnage.
+            <strong>Long Future</strong> – Calculates mark-to-market gains or losses using
+            (settlement − entry) × quantity.
           </li>
           <li>
-            <strong>Long Call</strong> (<code>components/LongCall.jsx</code>):
-            collects strike, premium, quantity, and expected expiry price to
-            compute payoff, total premium, net P/L, and per-ton breakeven.
+            <strong>Long Call</strong> – Models option payoff, breakeven price, and net P/L.
           </li>
         </ul>
 
-        <SectionTitle>📊 Data Pipeline</SectionTitle>
-        <p style={paragraphStyle}>
-          Historical hot-rolled coil curves ship with the repo as
-          region-specific workbooks:
-          <code style={{ marginLeft: "4px" }}>HC Closing Prices.xlsx</code> (China),
-          <code style={{ marginLeft: "4px" }}>SI Closing Prices.xlsx</code> (India),
-          and
-          <code style={{ marginLeft: "4px" }}>HU Closing Prices.xlsx</code> (United
-          States). The FastAPI backend loads each via
-          <code style={{ margin: "0 4px" }}>pandas</code>, caches them in
-          <code style={{ marginLeft: "4px" }}>backend/xlsx_parser.py</code>, and
-          exposes a unified <code>/prices</code> endpoint consumed by the
-          lightweight-charts widget in
-          <code style={{ marginLeft: "4px" }}>components/FuturesWidget</code>. The
-          raw files originate from London Metal Exchange CSV exports that we
-          convert to XLSX for deployment because the public LME feed is not
-          queryable in real time.
-        </p>
-
+        {/* ------------------------- FUTURE WORK -------------------- */}
         <SectionTitle>🔭 Future Work</SectionTitle>
         <ul style={listStyle}>
+          <li>Update SCC values as new federal or IAM estimates are released.</li>
           <li>
-            Assume the SCC schedule remains constant at the 2022 level with a 3%
-            discount rate today; future releases should regenerate SCC surfaces
-            whenever new integrated assessment model runs are published.
+            Add region-specific hydrology models to improve water scarcity
+            sensitivity.
           </li>
           <li>
-            Couple the tool to full climate-model ensembles for updated forcing
-            pathways; current runs would take more than a day on commodity
-            hardware.
+            Replace static price curves with a live futures market feed.
           </li>
           <li>
-            Introduce explicit regional basis differentials instead of assuming
-            market and manufacturing HRC rates are identical.
-          </li>
-          <li>
-            License a streaming futures feed to replace the static LME CSV
-            extracts bundled with the app.
-          </li>
-          <li>
-            Replace the simple water pricing multiplier with basin-scale
-            hydrologic modeling for each procurement region.
-          </li>
-          <li>
-            Update the SO₂ damage block with current epidemiological research to
-            tighten uncertainty bands.
-          </li>
+            Expand pollutant modeling beyond SO₂ to include NOₓ, VOCs, and ozone formation.</li>
+          <li>Introduce margin-of-error bands for all environmental estimates.</li>
         </ul>
       </div>
     </div>
