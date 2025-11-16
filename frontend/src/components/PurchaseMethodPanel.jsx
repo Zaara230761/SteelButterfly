@@ -1,12 +1,12 @@
 import { useState } from "react";
 import SpotPurchasing from "./PurchaseMethods/SpotVolume";
+import LongCall from "./PurchaseMethods/LongCall";
+import LongFuture from "./PurchaseMethods/LongFuture";
 
 const PURCHASING_METHODS = [
   "Spot/Volume-Commit",
-  "Fixed Spread Contracts",
-  "Futures",
-  "Swaps",
-  "Options",
+  "Long Future",
+  "Long Call",
 ];
 
 const PurchasingMethodPanel = () => {
@@ -16,15 +16,10 @@ const PurchasingMethodPanel = () => {
     switch (method) {
       case "Spot/Volume-Commit":
         return <SpotPurchasing />;
-      case "Fixed Spread Contracts":
-      case "Futures":
-      case "Swaps":
-      case "Options":
-        return (
-          <div style={{ marginTop: "12px", color: "#94a3b8" }}>
-            {method} placeholder
-          </div>
-        );
+      case "Long Call":
+        return <LongCall/>;
+      case "Long Future":
+        return <LongFuture/>;
       default:
         return null;
     }
