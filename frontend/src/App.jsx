@@ -45,9 +45,9 @@ const App = () => {
             marginTop: "30px",
           }}
         >
-          <div style={{ flex: "0 0 60%" }}>
+          <div style={{ flex: "0 0 70%" }}>
             <FuturesWidget />
-            <div style={{ marginLeft: "40px" }}>
+            <div style={{ marginLeft: "30px" }}>
               <ClimateImpactAdjuster />
             </div>
           </div>
