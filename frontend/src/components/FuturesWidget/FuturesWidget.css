@@ -129,16 +129,19 @@
   border: 1px solid #1e293b;
   border-radius: 6px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-  min-width: 200px;
+  min-width: 260px;
+  max-height: 420px;
+  overflow-y: auto;
   z-index: 20;
   padding: 4px 0;
 }
 
 .region-option {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 12px 14px;
   cursor: pointer;
   user-select: none;
   color: #e5e7eb;
@@ -148,8 +151,40 @@
 }
 
 .region-option.selected {
-  color: #ffffff;
   background-color: #1e293b;
+  color: #ffffff;
+}
+
+.region-option-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.mill-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 24px;
+  width: 100%;
+}
+
+.mill-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #cbd5f5;
+}
+
+.mill-option input:disabled + span {
+  color: #64748b;
+}
+
+.mill-option span {
+  flex: 1;
 }
 
 .futures-widget-months {
