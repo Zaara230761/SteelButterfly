@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Chart from "./components/chart/chart";
 import Header from "./components/Header";
 import TabBar from "./components/TabBar";
 import FuturesWidget from "./components/FuturesWidget";
@@ -12,7 +11,7 @@ const App = () => {
   const [activeTab, setActiveTab] = useState("visualizer");
 
   useEffect(() => {
-    if (activeTab !== "visualizer") return; // only fetch on visualizer tab
+    if (activeTab !== "visualizer") return;
     fetch(`http://localhost:8000/prices?region=${region}&month=${month}`)
       .then((res) => res.json())
       .then((data) => {
@@ -40,12 +39,9 @@ const App = () => {
             padding: "32px 48px",
           }}
         >
-          {/* LEFT COLUMN: HRC Prices widget */}
           <div style={{ flex: "0 0 640px" }}>
             <FuturesWidget />
           </div>
-
-          {/* RIGHT COLUMN: Purchasing Method panel */}
           <div style={{ flex: "0 0 360px", marginTop: "94px" }}>
             <PurchasingMethodPanel />
           </div>

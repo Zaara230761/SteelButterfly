@@ -1,9 +1,18 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from xlsx_parser import xlsx_parser
 from fastapi.responses import ORJSONResponse
+from contextlib import asynccontextmanager
 
-app = FastAPI(default_response_class=ORJSONResponse)
+from xlsx_parser import xlsx_parser, load_price_df, PRICE_FILES
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    for region in PRICE_FILES.keys():
+        load_price_df(region)
+    yield
+
+app = FastAPI(default_response_class=ORJSONResponse, lifespan=lifespan)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -11,6 +20,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/prices")
 def get_prices(month: int, region: str):
-    return xlsx_parser(region, month)
+    try:
+        return xlsx_parser(region, month)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
