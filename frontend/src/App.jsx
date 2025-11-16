@@ -17,20 +17,20 @@ const App = () => {
       {activeTab === "visualizer" && (
         <div
           style={{
-            width: "95%",
+            width: "100%",
             display: "flex",
             alignItems: "flex-start",
             gap: "32px",
-            marginTop: "30px",
+            margin: "20px",
           }}
         >
-          <div style={{ flex: "0 0 70%" }}>
+          <div>
             <FuturesWidget />
-            <div style={{ margin: "40px" }}>
+            <div>
               <ClimateImpactAdjuster />
             </div>
           </div>
-          <div style={{ flex: "0 0 40%" }}>
+          <div>
             <PurchasingMethodPanel />
           </div>
         </div>

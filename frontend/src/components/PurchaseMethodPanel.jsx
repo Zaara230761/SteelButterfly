@@ -11,31 +11,20 @@ const PURCHASING_METHODS = [
 
 const PurchasingMethodPanel = () => {
   const [method, setMethod] = useState(PURCHASING_METHODS[0]);
+
   const renderMethodComponent = () => {
     switch (method) {
       case "Spot/Volume-Commit":
         return <SpotPurchasing />;
-
       case "Fixed Spread Contracts":
-        return <div style={{ marginTop: "20px", color: "#94a3b8" }}>
-          Fixed Spread Contracts placeholder
-        </div>;
-
       case "Futures":
-        return <div style={{ marginTop: "20px", color: "#94a3b8" }}>
-          Futures placeholder
-        </div>;
-
       case "Swaps":
-        return <div style={{ marginTop: "20px", color: "#94a3b8" }}>
-          Swaps placeholder
-        </div>;
-
       case "Options":
-        return <div style={{ marginTop: "20px", color: "#94a3b8" }}>
-          Options placeholder
-        </div>;
-
+        return (
+          <div style={{ marginTop: "12px", color: "#94a3b8" }}>
+            {method} placeholder
+          </div>
+        );
       default:
         return null;
     }
@@ -44,61 +33,50 @@ const PurchasingMethodPanel = () => {
   return (
     <div
       style={{
-        padding: "20px 24px",
+        padding: "16px 24px",
         borderRadius: "12px",
         backgroundColor: "#020617",
         border: "1px solid #1e293b",
-        boxSizing: "border-box",
         color: "white",
         fontFamily: "Inter, sans-serif",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
       }}
     >
-      <div
+      <h2
         style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          gap: "16px",
+          fontSize: "22px",
+          fontWeight: 700,
+          margin: 0,
+          textAlign: "center",
         }}
       >
-        <h2
-          style={{
-            fontSize: "22px",
-            fontWeight: 700,
-          }}
-        >
-          Purchase Method
-        </h2>
+        Purchase Method
+      </h2>
 
-        <select
-          id="purchasing-method-select"
-          value={method}
-          onChange={(e) => setMethod(e.target.value)}
-          style={{
-            flex: 1,
-            padding: "10px 14px",
-            borderRadius: "10px",
-            border: "1px solid #1f2937",
-            backgroundColor: "#020617",
-            color: "#e5e7eb",
-            fontSize: "15px",
-            fontFamily: "Inter, sans-serif",
-            cursor: "pointer",
-            boxSizing: "border-box",
-          }}
-        >
-          {PURCHASING_METHODS.map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
-          ))}
-        </select>
-      </div>
+      <select
+        id="purchasing-method-select"
+        value={method}
+        onChange={(e) => setMethod(e.target.value)}
+        style={{
+          padding: "10px 14px",
+          borderRadius: "10px",
+          border: "1px solid #1f2937",
+          backgroundColor: "#020617",
+          color: "#e5e7eb",
+          fontSize: "15px",
+          cursor: "pointer",
+        }}
+      >
+        {PURCHASING_METHODS.map((m) => (
+          <option key={m} value={m}>
+            {m}
+          </option>
+        ))}
+      </select>
 
-      {/* Render the method-specific UI BELOW the selector */}
-      <div style={{ marginTop: "24px" }}>
-        {renderMethodComponent()}
-      </div>
+      {renderMethodComponent()}
     </div>
   );
 };
