@@ -70,14 +70,15 @@ def climate_adjuster_with_uncertainties(
         T_CO2,
         D_PM,
         E_SO2,
-        Y,
-        f_sulf,
         M_SO2,
-        C0,
-        beta,
         S,
         W
     )
+
+    f_sulf = 0.2 #Fraction of PM₂.₅ monetary damage attributable to sulfate
+    Y = 1.4 #Mass yield (t PM₂.₅ sulfate formed per t SO₂ emitted)
+    C0 = 1 #base cost of water 
+    beta = 9 #scarcity sensitivity parameter. Toggle beteen 4 - 15
 
     # 2. Error propagation for each component
 
