@@ -1,70 +1,101 @@
-import { useEffect, useState } from "react";
-import ReactECharts from "echarts-for-react";
-import Loader from "./components/loader/loader";
-import "./App.css";
+// App.jsx
+import React, { useEffect, useRef } from "react";
+import { createChart, LineSeries } from "lightweight-charts";
 
-function App() {
-  const [lineData, setLineData] = useState(null);
-  const API_URL = import.meta.env.VITE_API_URL;
+const App = () => {
+  const chartContainerRef = useRef(null);
+  const chartRef = useRef(null);
+  const seriesRef = useRef(null);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch(`${API_URL}/line`);
-        const data = await res.json();
-        setLineData(data);
-      } catch (err) {
-        console.error("Failed to fetch line data:", err);
-      }
-    }
+    const container = chartContainerRef.current;
+    if (!container) return;
 
-    fetchData();
-  }, [API_URL]);
-
-  if (!lineData) return <Loader />;
-
-  const options = {
-    title: {
-      text: "Basic ECharts Line",
-    },
-    tooltip: {
-      trigger: "axis",
-    },
-    xAxis: {
-      type: "category",
-      data: lineData.x,
-      name: "X",
-    },
-    yAxis: {
-      type: "value",
-      name: "Y",
-    },
-    series: [
-      {
-        name: "Sample series",
-        type: "line",
-        data: lineData.y,
-        smooth: true,
+    // Create chart (v5+ syntax)
+    const chart = createChart(container, {
+      width: container.clientWidth,
+      height: 400,
+      layout: {
+        background: { type: "solid", color: "#ffffff" },
+        textColor: "#333333",
       },
-    ],
-  };
+      grid: {
+        vertLines: { color: "#eeeeee" },
+        horzLines: { color: "#eeeeee" },
+      },
+      rightPriceScale: {
+        borderColor: "#cccccc",
+      },
+      timeScale: {
+        borderColor: "#cccccc",
+      },
+    });
+
+    chartRef.current = chart;
+
+    // ✅ New API: addSeries(LineSeries, options)
+    const lineSeries = chart.addSeries(LineSeries, {
+      lineWidth: 2,
+      lineColor: "#2962FF",
+    });
+    seriesRef.current = lineSeries;
+
+    // Sample data
+    lineSeries.setData([
+      { time: "2024-01-01", value: 110 },
+      { time: "2024-01-02", value: 113 },
+      { time: "2024-01-03", value: 108 },
+      { time: "2024-01-04", value: 115 },
+      { time: "2024-01-05", value: 120 },
+      { time: "2024-01-06", value: 119 },
+      { time: "2024-01-07", value: 123 },
+    ]);
+
+    chart.timeScale().fitContent();
+
+    // Make chart responsive
+    const handleResize = () => {
+      if (!chartRef.current || !chartContainerRef.current) return;
+      chartRef.current.applyOptions({
+        width: chartContainerRef.current.clientWidth,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup on unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (chartRef.current) {
+        chartRef.current.remove();
+        chartRef.current = null;
+        seriesRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <div
       style={{
         width: "100%",
-        maxWidth: "1200px",
+        maxWidth: "800px",
         margin: "40px auto",
-        padding: "20px",
+        border: "1px solid #ddd",
+        borderRadius: "8px",
+        padding: "16px",
+        boxSizing: "border-box",
+        fontFamily: "system-ui, sans-serif",
       }}
     >
-      <ReactECharts
-        option={options}
-        style={{ width: "100%", height: "500px" }}
+      <h2 style={{ marginTop: 0, marginBottom: "16px" }}>
+        Lightweight Charts – React (v5+) Example
+      </h2>
+      <div
+        ref={chartContainerRef}
+        style={{ width: "100%", height: "400px" }}
       />
     </div>
   );
+};
 
-}
-
-export default App
+export default App;

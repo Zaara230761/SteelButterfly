@@ -14,5 +14,5 @@ app.add_middleware(
 def get_line_data():
     return {
         "x": [1, 2, 3, 4, 5],
-        "y": [10, 8, 12, 15, 14]
+        "y": [10, 9, 7, 5, 3]
     }
